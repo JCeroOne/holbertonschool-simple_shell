@@ -7,6 +7,15 @@
 #include "simpleshellfn.h"
 
 /**
+ * error - Prints an error message
+ * @name: The name used when opening the shell
+ * @cmd: The command that generated the error
+ */
+void error(char *name, char *cmd)
+{
+	printf("%s: 1: %s: not found", name, cmd);
+}
+/**
  * env - Prints the environment variables
  * @envp: The environment to print
 */
@@ -57,7 +66,7 @@ int main(int argc, char *argv[], char **envp)
 	char *cmd = NULL;
 	size_t size = 0;
 
-	printf("[DEBUG] %d %s %s\n", argc, argv[0], *envp);
+ 	(void) argc;
 
 	while(1)
 	{
@@ -71,6 +80,9 @@ int main(int argc, char *argv[], char **envp)
 
 		else if(strcmp(cmd, "env") == 0)
 			env(envp);
+
+		else if(strcmp(cmd, "errtest") == 0)
+			error(argv[0], cmd);
 
 		else
 			exec(cmd, envp);

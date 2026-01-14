@@ -6,6 +6,10 @@
 #include <fcntl.h>
 #include "simpleshellfn.h"
 
+/**
+ * free_args - Frees the argument variable
+ * @args: The argument variable to free
+ */
 void free_args(char **args)
 {
 	while(*args)
@@ -16,6 +20,12 @@ void free_args(char **args)
 	free(args);
 }
 
+/**
+ * parse - Extracts the arguments from the given command string
+ * @cmd: The command string to parse
+ *
+ * Return: A pointer to the arguments
+ */
 char **parse(char *cmd)
 {
 	char *copy = strdup(cmd);
@@ -71,6 +81,13 @@ char **parse(char *cmd)
 	return (args);
 }
 
+/**
+ * exec - Runs a command within the local environment
+ * @cmd: The command string to run
+ * @envp: The local environment
+ *
+ * Return: 1 if succesful
+ */
 int exec(char *cmd, char **envp)
 {
 	char **args = parse(cmd);

@@ -7,6 +7,6 @@ char **parse(char *cmd);
 int exec(char *cmd, char **envp);
 char **get_path(char *cmd, char **envp);
 void env(char **envp);
-void error(char *cmd);
+void error(char *name, char *cmd);
 
 #endif /* _SIMPLESHELLFN_H_ */
