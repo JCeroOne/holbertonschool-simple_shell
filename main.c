@@ -7,6 +7,21 @@
 #include "simpleshellfn.h"
 
 /**
+ * env - Prints the environment variables
+ * @envp: The environment to print
+*/
+void env(char **envp)
+{
+	int i = 0;
+
+	while(envp[i])
+	{
+		printf("%s\n", envp[i]);
+		i++;
+	}
+}
+
+/**
  * input - Waits for and reads input from the user.
  * @cmd: A pointer to the cmd variable (char *)
  * @size: A pointer to the size variable (size_t)
@@ -43,7 +58,6 @@ int main(int argc, char *argv[], char **envp)
 	size_t size = 0;
 
 	printf("[DEBUG] %d %s %s\n", argc, argv[0], *envp);
-	printf("\nWelcome to JC's Simple Shell!\nTo close the shell, type 'exit'\n");
 
 	while(1)
 	{
@@ -54,6 +68,9 @@ int main(int argc, char *argv[], char **envp)
 
 		if(strcmp(cmd, "exit") == 0)
 			exit(EXIT_SUCCESS);
+
+		else if(strcmp(cmd, "env") == 0)
+			env(envp);
 
 		else
 			exec(cmd, envp);
