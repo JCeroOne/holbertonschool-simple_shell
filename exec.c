@@ -12,7 +12,7 @@
  */
 void free_args(char **args)
 {
-	while(*args)
+	while (*args)
 	{
 		free(*args);
 		args++;
@@ -33,51 +33,38 @@ char **parse(char *cmd)
 	char **args = NULL;
 	int i = 0;
 	int argc = 0;
-
-	if(!copy)
+	if (!copy)
 		return (NULL);
-
 	tok = strtok(copy, " ");
-
-	while(tok)
+	while (tok)
 	{
 		argc++;
 		tok = strtok(NULL, " ");
 	}
-
 	free(copy);
 	args = malloc((argc + 1) * sizeof(char *));
-
-	if(!args)
+	if (!args)
 		return (NULL);
-	
 	copy = strdup(cmd);
-
-	if(!copy)
+	if (!copy)
 	{
 		free_args(args);
 		return (NULL);
 	}
-
 	tok = strtok(copy, " ");
-
 	for (i = 0; tok; i++)
 	{
 		args[i] = strdup(tok);
-
 		if(!args[i])
 		{
 			free_args(args);
 			free(copy);
 			return (NULL);
 		}
-
 		tok = strtok(NULL, " ");
 	}
-
 	args[i] = NULL;
 	free(copy);
-
 	return (args);
 }
 

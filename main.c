@@ -23,7 +23,7 @@ void env(char **envp)
 {
 	int i = 0;
 
-	while(envp[i])
+	while (envp[i])
 	{
 		printf("%s\n", envp[i]);
 		i++;
@@ -43,13 +43,13 @@ void input(char **cmd, size_t *size)
 
 	if (read_chars == EOF)
 	{
-		if(isatty(STDIN_FILENO) != 0)
+		if (isatty(STDIN_FILENO) != 0)
 			printf("\n");
-		
+
 		exit(EXIT_SUCCESS);
 	}
 
-	if((*cmd)[read_chars - 1] == '\n')
+	if ((*cmd)[read_chars - 1] == '\n')
 		(*cmd)[read_chars - 1] = '\0';
 }
 
@@ -65,25 +65,18 @@ int main(int argc, char *argv[], char **envp)
 {
 	char *cmd = NULL;
 	size_t size = 0;
-
  	(void) argc;
-
 	while(1)
 	{
-		if(isatty(STDIN_FILENO))
+		if (isatty(STDIN_FILENO))
 			printf("\n($) ");
-
 		input(&cmd, &size);
-
-		if(strcmp(cmd, "exit") == 0)
+		if (strcmp(cmd, "exit") == 0)
 			exit(EXIT_SUCCESS);
-
-		else if(strcmp(cmd, "env") == 0)
+		else if (strcmp(cmd, "env") == 0)
 			env(envp);
-
-		else if(strcmp(cmd, "errtest") == 0)
+		else if (strcmp(cmd, "errtest") == 0)
 			error(argv[0], cmd);
-
 		else
 			exec(cmd, envp);
 	}
