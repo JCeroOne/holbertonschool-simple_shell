@@ -33,6 +33,7 @@ char **parse(char *cmd)
 	char **args = NULL;
 	int i = 0;
 	int argc = 0;
+
 	if (!copy)
 		return (NULL);
 	tok = strtok(copy, " ");
@@ -55,7 +56,7 @@ char **parse(char *cmd)
 	for (i = 0; tok; i++)
 	{
 		args[i] = strdup(tok);
-		if(!args[i])
+		if (!args[i])
 		{
 			free_args(args);
 			free(copy);
@@ -78,6 +79,7 @@ char **parse(char *cmd)
 int exec(char *cmd, char **envp)
 {
 	char **args = parse(cmd);
+	
 	printf("%s, %s, %s (%s)", args[0], args[1], args[2], *envp);
 	free(args);
 	return (1);

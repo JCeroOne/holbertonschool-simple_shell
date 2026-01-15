@@ -65,8 +65,8 @@ int main(int argc, char *argv[], char **envp)
 {
 	char *cmd = NULL;
 	size_t size = 0;
- 	(void) argc;
-	while(1)
+	(void) argc;
+	while (1)
 	{
 		if (isatty(STDIN_FILENO))
 			printf("\n($) ");
