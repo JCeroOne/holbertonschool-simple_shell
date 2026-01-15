@@ -79,7 +79,7 @@ char **parse(char *cmd)
 int exec(char *cmd, char **envp)
 {
 	char **args = parse(cmd);
-	
+
 	printf("%s, %s, %s (%s)", args[0], args[1], args[2], *envp);
 	free(args);
 	return (1);
