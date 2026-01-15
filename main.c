@@ -53,7 +53,7 @@ void input(char **cmd, size_t *size)
 		(*cmd)[read_chars - 1] = '\0';
 }
 
-/*
+/**
  * main - Entry point for the shell
  * @argc: The number of arguments passed
  * @argv: The values of the arguments
