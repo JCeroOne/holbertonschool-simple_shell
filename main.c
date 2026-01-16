@@ -45,7 +45,8 @@ void input(char **cmd, size_t *size)
 	{
 		if (isatty(STDIN_FILENO) != 0)
 			printf("\n");
-
+		
+		free(*cmd);
 		exit(EXIT_SUCCESS);
 	}
 
