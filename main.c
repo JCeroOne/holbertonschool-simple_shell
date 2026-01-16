@@ -31,6 +31,30 @@ void env(char **envp)
 }
 
 /**
+ * trim - Removes all spaces surrounding the command
+ * @cmd: The command to trim
+ */
+void trim(char *cmd)
+{
+	int start = 0;
+	int end = 0;
+
+	while (cmd[start] == ' ' || cmd[start] == '\t')
+		start++;
+
+	if (start > 0)
+		memmove(cmd, cmd + start, strlen(cmd + start) + 1);
+
+	end = strlen(cmd) - 1;
+
+	while (end >= 0 && (cmd[end] == ' ' || cmd[end] == '\t'))
+	{
+		cmd[end] = '\0';
+		end--;
+	}
+}
+
+/**
  * input - Waits for and reads input from the user.
  * @cmd: A pointer to the cmd variable (char *)
  * @size: A pointer to the size variable (size_t)
@@ -56,6 +80,8 @@ int input(char **cmd, size_t *size)
 	if ((*cmd)[read_chars - 1] == '\n')
 		(*cmd)[read_chars - 1] = '\0';
 
+	trim(*cmd);
+
 	for(i = 0; cmd[i]; i++)
 	{
 		if((*cmd)[i] != ' ' && (*cmd)[i] != '\t')
@@ -78,6 +104,7 @@ int main(int argc, char *argv[], char **envp)
 	char *cmd = NULL;
 	size_t size = 0;
 	int valid = 0;
+	int status = 0;
 	(void) argc;
 	while (1)
 	{
@@ -92,13 +119,13 @@ int main(int argc, char *argv[], char **envp)
 		if (strncmp(cmd, "exit", 4) == 0)
 		{
 			free(cmd);
-			exit(EXIT_SUCCESS);
+			exit(status);
 		}
 
 		else if (strncmp(cmd, "env", 3) == 0)
 			env(envp);
 
 		else
-			exec(argv[0], cmd, envp);
+			status = exec(argv[0], cmd, envp);
 	}
 }

@@ -67,22 +67,27 @@ char *getvar(char *var, char **envp)
  */
 char *cmdpath(char *cmd, char **envp)
 {
-	char *paths = getvar("PATH", envp);
-	char *copy = strdup(paths);
+	char *paths = NULL;
+	char *copy = NULL;
 	char *path;
 	char *tok;
-
+	
+	if (strchr(cmd, '/'))
+	{
+		if(access(cmd, F_OK) == 0)
+			return (strdup(cmd));
+		return (NULL);
+	}
+	paths = getvar("PATH", envp);
 	if(!paths)
 		return (NULL);
-
+	copy = strdup(paths);
 	if(!copy)
 	{
 		free(paths);
 		return (0);
 	}
-
 	tok = strtok(copy, ":");
-
 	while (tok)
 	{
 		path = malloc(strlen(tok) + strlen(cmd) + 2);	
@@ -90,18 +95,15 @@ char *cmdpath(char *cmd, char **envp)
 			sprintf(path, "%s/%s", tok, cmd);
 		else
 			sprintf(path, "%s", cmd);
-
 		if(access(path, F_OK) == 0)
 		{
 			free(copy);
 			free(paths);
 			return (path);
-		}
-		
+		}	
 		free(path);
 		tok = strtok(NULL, ":");
 	}
-
 	free(copy);
 	free(paths);
 	return (NULL);
@@ -171,16 +173,16 @@ int exec(char *name, char *cmd, char **envp)
 	char **args = parse(cmd);
 	char *path = cmdpath(args[0], envp);
 
-	if(!path)
+	if (!path)
 	{
 		error(name, args[0]);
 		free_args(args);
-		return (-1);
+		return (127);
 	}
 
 	id = fork();
 
-	if(id < 0)
+	if (id < 0)
 	{
 		printf("%s: 1: %s: fork failed", name, args[0]);
 		free(path);
@@ -188,7 +190,7 @@ int exec(char *name, char *cmd, char **envp)
 		return (-1);
 	}
 
-	if(id > 0)
+	if (id > 0)
 	{
 		waitpid(id, &status, 0);
 		free(path);
@@ -197,6 +199,13 @@ int exec(char *name, char *cmd, char **envp)
 	}
 
 	execve(path, args, envp);
+
+	if (WIFEXITED(status))
+	{
+		free(path);
+		free_args(args);
+		return (WEXITSTATUS(status));	
+	}
 
 	free(path);
 	free_args(args);
