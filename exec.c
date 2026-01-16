@@ -86,7 +86,7 @@ char *cmdpath(char *cmd, char **envp)
 	while (tok)
 	{
 		path = malloc(strlen(tok) + strlen(cmd) + 2);	
-		if(cmd[0] != '/')
+		if(cmd[0] != '/' && strncmp(cmd, "./", 2) != 0)
 			sprintf(path, "%s/%s", tok, cmd);
 		else
 			sprintf(path, "%s", cmd);
