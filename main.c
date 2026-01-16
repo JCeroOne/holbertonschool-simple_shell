@@ -34,10 +34,13 @@ void env(char **envp)
  * input - Waits for and reads input from the user.
  * @cmd: A pointer to the cmd variable (char *)
  * @size: A pointer to the size variable (size_t)
+ *
+ * Return: 1 if the input is valid, 0 if its only spaces
 */
-void input(char **cmd, size_t *size)
+int input(char **cmd, size_t *size)
 {
 	int read_chars;
+	int i;
 
 	read_chars = getline(cmd, size, stdin);
 
@@ -52,6 +55,14 @@ void input(char **cmd, size_t *size)
 
 	if ((*cmd)[read_chars - 1] == '\n')
 		(*cmd)[read_chars - 1] = '\0';
+
+	for(i = 0; cmd[i]; i++)
+	{
+		if((*cmd)[i] != ' ' && (*cmd)[i] != '\t')
+			return (1);
+	}
+
+	return (0);
 }
 
 /**
@@ -66,13 +77,17 @@ int main(int argc, char *argv[], char **envp)
 {
 	char *cmd = NULL;
 	size_t size = 0;
+	int valid = 0;
 	(void) argc;
 	while (1)
 	{
 		if (isatty(STDIN_FILENO))
 			printf("($) ");
 		
-		input(&cmd, &size);
+		valid = input(&cmd, &size);
+
+		if(valid == 0)
+			continue;
 		
 		if (strncmp(cmd, "exit", 4) == 0)
 		{
