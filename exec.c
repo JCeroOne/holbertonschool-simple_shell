@@ -85,14 +85,19 @@ char *cmdpath(char *cmd, char **envp)
 
 	while (tok)
 	{
-		path = malloc(strlen(tok) + strlen(cmd) + 2);
-		sprintf(path, "%s/%s", tok, cmd);
+		path = malloc(strlen(tok) + strlen(cmd) + 2);	
+		if(cmd[0] != '/')
+			sprintf(path, "%s/%s", tok, cmd);
+		else
+			sprintf(path, "%s", cmd);
+
 		if(access(path, F_OK) == 0)
 		{
 			free(copy);
 			free(paths);
 			return (path);
 		}
+		
 		free(path);
 		tok = strtok(NULL, ":");
 	}
