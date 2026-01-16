@@ -70,11 +70,18 @@ int main(int argc, char *argv[], char **envp)
 	{
 		if (isatty(STDIN_FILENO))
 			printf("($) ");
+		
 		input(&cmd, &size);
+		
 		if (strncmp(cmd, "exit", 4) == 0)
+		{
+			free(cmd);
 			exit(EXIT_SUCCESS);
+		}
+
 		else if (strncmp(cmd, "env", 3) == 0)
 			env(envp);
+
 		else
 			exec(argv[0], cmd, envp);
 	}
