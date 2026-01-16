@@ -13,7 +13,7 @@
  */
 void error(char *name, char *cmd)
 {
-	printf("%s: 1: %s: not found", name, cmd);
+	printf("%s: 1: %s: not found\n", name, cmd);
 }
 /**
  * env - Prints the environment variables
@@ -69,7 +69,7 @@ int main(int argc, char *argv[], char **envp)
 	while (1)
 	{
 		if (isatty(STDIN_FILENO))
-			printf("\n($) ");
+			printf("($) ");
 		input(&cmd, &size);
 		if (strcmp(cmd, "exit") == 0)
 			exit(EXIT_SUCCESS);
@@ -78,6 +78,6 @@ int main(int argc, char *argv[], char **envp)
 		else if (strcmp(cmd, "errtest") == 0)
 			error(argv[0], cmd);
 		else
-			exec(cmd, envp);
+			exec(argv[0], cmd, envp);
 	}
 }

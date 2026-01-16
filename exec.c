@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <fcntl.h>
+#include <sys/wait.h>
 #include "simpleshellfn.h"
 
 /**
@@ -57,19 +58,21 @@ char *getvar(char *var, char **envp)
 }
 
 /**
- * cmdallowed - Checks if the given command exists and is accesible.
+ * cmdpath - Returns the path of the given command.
  * @cmd: The command to check
  * @envp: The local environment
  *
- * Return: 1 if the command exists and is accesible, 0 otherwise.
+ * Return: The path of the file to run. NULL if the command isn't accesible.
  */
-int cmdallowed(char *cmd, char **envp)
+char *cmdpath(char *cmd, char **envp)
 {
 	char *paths = getvar("PATH", envp);
 	char *copy = strdup(paths);
+	char *path;
 	char *tok;
 
-	printf("%s", cmd);
+	if(!paths)
+		return (NULL);
 
 	if(!copy)
 	{
@@ -81,12 +84,19 @@ int cmdallowed(char *cmd, char **envp)
 
 	while (tok)
 	{
-		printf("%s\n", tok);
+		path = malloc(strlen(tok) + strlen(cmd) + 2);
+		sprintf(path, "%s/%s", tok, cmd);
+		if(access(path, F_OK) == 0)
+		{
+			free(paths);
+			return (path);
+		}
+		free(path);
 		tok = strtok(NULL, ":");
 	}
 
 	free(paths);
-	return (0);
+	return (NULL);
 }
 
 /**
@@ -140,17 +150,47 @@ char **parse(char *cmd)
 
 /**
  * exec - Runs a command within the local environment
+ * @name: The name used to run the shell
  * @cmd: The command string to run
  * @envp: The local environment
  *
  * Return: 1 if succesful
  */
-int exec(char *cmd, char **envp)
+int exec(char *name, char *cmd, char **envp)
 {
+	pid_t id;
+	int status;
 	char **args = parse(cmd);
-	
-	cmdallowed(cmd, envp);
+	char *path = cmdpath(args[0], envp);
 
+	if(!path)
+	{
+		error(name, args[0]);
+		free(args);
+		return (-1);
+	}
+
+	id = fork();
+
+	if(id < 0)
+	{
+		printf("%s: 1: %s: fork failed", name, args[0]);
+		free(path);
+		free(args);
+		return (-1);
+	}
+
+	if(id > 0)
+	{
+		waitpid(id, &status, 0);
+		free(path);
+		free(args);
+		return (-1);
+	}
+
+	execve(path, args, envp);
+
+	free(path);
 	free(args);
 	return (1);
 }
