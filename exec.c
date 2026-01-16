@@ -13,10 +13,11 @@
  */
 void free_args(char **args)
 {
-	while (*args)
+	int i = 0;
+	while (args[i])
 	{
-		free(*args);
-		args++;
+		free(args[i]);
+		i++;
 	}
 	free(args);
 }
@@ -88,6 +89,7 @@ char *cmdpath(char *cmd, char **envp)
 		sprintf(path, "%s/%s", tok, cmd);
 		if(access(path, F_OK) == 0)
 		{
+			free(copy);
 			free(paths);
 			return (path);
 		}
@@ -95,6 +97,7 @@ char *cmdpath(char *cmd, char **envp)
 		tok = strtok(NULL, ":");
 	}
 
+	free(copy);
 	free(paths);
 	return (NULL);
 }
@@ -166,7 +169,7 @@ int exec(char *name, char *cmd, char **envp)
 	if(!path)
 	{
 		error(name, args[0]);
-		free(args);
+		free_args(args);
 		return (-1);
 	}
 
@@ -176,7 +179,7 @@ int exec(char *name, char *cmd, char **envp)
 	{
 		printf("%s: 1: %s: fork failed", name, args[0]);
 		free(path);
-		free(args);
+		free_args(args);
 		return (-1);
 	}
 
@@ -184,13 +187,13 @@ int exec(char *name, char *cmd, char **envp)
 	{
 		waitpid(id, &status, 0);
 		free(path);
-		free(args);
+		free_args(args);
 		return (-1);
 	}
 
 	execve(path, args, envp);
 
 	free(path);
-	free(args);
+	free_args(args);
 	return (1);
 }
