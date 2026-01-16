@@ -21,6 +21,56 @@ void free_args(char **args)
 }
 
 /**
+ * getvar - Gets the contents of a variable within the environment
+ * @var: The variable to get
+ * @envp: The environment to search in.
+ *
+ * Return: A pointer to the contents of the variable.
+ */
+char *getvar(char *var, char **envp)
+{
+	char **env;
+	char *val = NULL;
+	int eqPos;
+
+	for(env = envp; *env != NULL; env++)
+	{
+		eqPos = 0;
+		while ((*env)[eqPos])
+		{
+			if((*env)[eqPos] == '=')
+				break;
+			eqPos++;
+		}
+
+		if((*env)[eqPos] != '=')
+			continue;
+
+		if(strncmp(*env, var, (size_t) eqPos) != 0)
+			continue;
+
+		val = strdup(*env + eqPos + 1);
+		return (val);
+	}
+
+	return (NULL);
+}
+
+/**
+ * cmdallowed - Checks if the given command exists and is accesible.
+ * @cmd: The command to check
+ * @path: The path to search within
+ * @envp: The local environment
+ *
+ * Return: 1 if the command exists and is accesible, 0 otherwise.
+ */
+int cmdallowed(char **cmd, char *path, char **envp)
+{
+	printf("%s, %s, %s", *cmd, path, *envp);
+	return (0);
+}
+
+/**
  * parse - Extracts the arguments from the given command string
  * @cmd: The command string to parse
  *
@@ -79,8 +129,11 @@ char **parse(char *cmd)
 int exec(char *cmd, char **envp)
 {
 	char **args = parse(cmd);
+	char *env = getvar("PATH", envp);
 
-	printf("%s, %s, %s (%s)", args[0], args[1], args[2], *envp);
+	printf("%s", env);
+	free(env);
+
 	free(args);
 	return (1);
 }
