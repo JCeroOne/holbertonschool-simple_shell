@@ -59,14 +59,33 @@ char *getvar(char *var, char **envp)
 /**
  * cmdallowed - Checks if the given command exists and is accesible.
  * @cmd: The command to check
- * @path: The path to search within
  * @envp: The local environment
  *
  * Return: 1 if the command exists and is accesible, 0 otherwise.
  */
-int cmdallowed(char **cmd, char *path, char **envp)
+int cmdallowed(char *cmd, char **envp)
 {
-	printf("%s, %s, %s", *cmd, path, *envp);
+	char *paths = getvar("PATH", envp);
+	char *copy = strdup(paths);
+	char *tok;
+
+	printf("%s", cmd);
+
+	if(!copy)
+	{
+		free(paths);
+		return (0);
+	}
+
+	tok = strtok(copy, ":");
+
+	while (tok)
+	{
+		printf("%s\n", tok);
+		tok = strtok(NULL, ":");
+	}
+
+	free(paths);
 	return (0);
 }
 
@@ -129,10 +148,8 @@ char **parse(char *cmd)
 int exec(char *cmd, char **envp)
 {
 	char **args = parse(cmd);
-	char *env = getvar("PATH", envp);
-
-	printf("%s", env);
-	free(env);
+	
+	cmdallowed(cmd, envp);
 
 	free(args);
 	return (1);
