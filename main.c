@@ -64,7 +64,6 @@ void trim(char *cmd)
 int input(char **cmd, size_t *size)
 {
 	int read_chars;
-	int i;
 
 	read_chars = getline(cmd, size, stdin);
 
@@ -82,11 +81,8 @@ int input(char **cmd, size_t *size)
 
 	trim(*cmd);
 
-	for(i = 0; cmd[i]; i++)
-	{
-		if((*cmd)[i] != ' ' && (*cmd)[i] != '\t')
-			return (1);
-	}
+	if(strlen(*cmd) > 0)
+		return (1);
 
 	return (0);
 }
