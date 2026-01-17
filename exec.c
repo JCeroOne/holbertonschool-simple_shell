@@ -187,7 +187,7 @@ int exec(char *name, char *cmd, char **envp)
 		printf("%s: 1: %s: fork failed", name, args[0]);
 		free(path);
 		free_args(args);
-		return (-1);
+		return (1);
 	}
 
 	if (id > 0)
@@ -195,7 +195,11 @@ int exec(char *name, char *cmd, char **envp)
 		waitpid(id, &status, 0);
 		free(path);
 		free_args(args);
-		return (-1);
+		
+		if(WIFEXITED(status))
+			return (WEXITSTATUS(status));
+
+		return (1);
 	}
 
 	execve(path, args, envp);
@@ -209,5 +213,5 @@ int exec(char *name, char *cmd, char **envp)
 
 	free(path);
 	free_args(args);
-	return (1);
+	return (EXIT_SUCCESS);
 }
