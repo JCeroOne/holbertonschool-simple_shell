@@ -74,13 +74,18 @@ char *cmdpath(char *cmd, char **envp)
 	
 	if (strchr(cmd, '/'))
 	{
-		if(access(cmd, F_OK) == 0)
+		if(access(cmd, X_OK) == 0)
 			return (strdup(cmd));
 		return (NULL);
 	}
 	paths = getvar("PATH", envp);
 	if(!paths)
 		return (NULL);
+	if(paths[0] == '\0')
+	{
+		free(paths);
+		return (NULL);
+	}
 	copy = strdup(paths);
 	if(!copy)
 	{
@@ -95,7 +100,7 @@ char *cmdpath(char *cmd, char **envp)
 			sprintf(path, "%s/%s", tok, cmd);
 		else
 			sprintf(path, "%s", cmd);
-		if(access(path, F_OK) == 0)
+		if(access(path, X_OK) == 0)
 		{
 			free(copy);
 			free(paths);
@@ -204,14 +209,8 @@ int exec(char *name, char *cmd, char **envp)
 
 	execve(path, args, envp);
 
-	if (WIFEXITED(status))
-	{
-		free(path);
-		free_args(args);
-		return (WEXITSTATUS(status));	
-	}
-
+	perror(name);
 	free(path);
 	free_args(args);
-	return (EXIT_SUCCESS);
+	exit(126);
 }

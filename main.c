@@ -119,7 +119,10 @@ int main(int argc, char *argv[], char **envp)
 		}
 
 		else if (strncmp(cmd, "env", 3) == 0)
+		{
 			env(envp);
+			status = 0;
+		}
 
 		else
 			status = exec(argv[0], cmd, envp);
