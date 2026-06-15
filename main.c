@@ -13,7 +13,7 @@
  */
 void error(char *name, char *cmd)
 {
-	dprintf(STDERR_FILENO, "%s: 1: %s: not found\n", name, cmd);
+	fprintf(stderr, "%s: 1: %s: not found\n", name, cmd);
 }
 
 /**
