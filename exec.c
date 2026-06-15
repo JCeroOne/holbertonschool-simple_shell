@@ -48,7 +48,10 @@ char *getvar(char *var, char **envp)
 		if((*env)[eqPos] != '=')
 			continue;
 
-		if(strncmp(*env, var, (size_t) eqPos) != 0)
+		if ((int)strlen(var) != eqPos)
+			continue;
+
+		if (strncmp(*env, var, eqPos) != 0)
 			continue;
 
 		val = strdup(*env + eqPos + 1);
@@ -90,7 +93,7 @@ char *cmdpath(char *cmd, char **envp)
 	if(!copy)
 	{
 		free(paths);
-		return (0);
+		return (NULL);
 	}
 	tok = strtok(copy, ":");
 	while (tok)
