@@ -15,6 +15,7 @@ void error(char *name, char *cmd)
 {
 	printf("%s: 1: %s: not found\n", name, cmd);
 }
+
 /**
  * env - Prints the environment variables
  * @envp: The environment to print
@@ -59,8 +60,11 @@ void trim(char *cmd)
  * @cmd: A pointer to the cmd variable (char *)
  * @size: A pointer to the size variable (size_t)
  *
- * Return: 1 if the input is valid, 0 if its only spaces
-*/
+ * Return:
+ *  1 if the input is valid
+ *  0 if it contains only spaces
+ * -1 on EOF
+ */
 int input(char **cmd, size_t *size)
 {
 	int read_chars;
@@ -71,9 +75,8 @@ int input(char **cmd, size_t *size)
 	{
 		if (isatty(STDIN_FILENO) != 0)
 			printf("\n");
-		
-		free(*cmd);
-		exit(EXIT_SUCCESS);
+
+		return (-1);
 	}
 
 	if ((*cmd)[read_chars - 1] == '\n')
@@ -81,7 +84,7 @@ int input(char **cmd, size_t *size)
 
 	trim(*cmd);
 
-	if(strlen(*cmd) > 0)
+	if (strlen(*cmd) > 0)
 		return (1);
 
 	return (0);
@@ -101,17 +104,25 @@ int main(int argc, char *argv[], char **envp)
 	size_t size = 0;
 	int valid = 0;
 	int status = 0;
+
 	(void) argc;
+
 	while (1)
 	{
 		if (isatty(STDIN_FILENO))
 			printf("($) ");
-		
+
 		valid = input(&cmd, &size);
 
-		if(valid == 0)
+		if (valid == -1)
+		{
+			free(cmd);
+			exit(status);
+		}
+
+		if (valid == 0)
 			continue;
-		
+
 		if (strncmp(cmd, "exit", 4) == 0)
 		{
 			free(cmd);
